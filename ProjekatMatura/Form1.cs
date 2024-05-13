@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskBand;
+using System.IO;
+using System.Collections;
 
 namespace ProjekatMatura
 {
@@ -17,6 +20,38 @@ namespace ProjekatMatura
 		{
 			InitializeComponent();
 			drugiPredmet.SelectedIndex = 0;
+			UpdateStatus();
+			data = LoadUcenikList("data.csv");
+			templates = LoadUcenikList("templates.csv");
+		}
+		~Form1()
+		{
+			SaveUcenikList("data.csv", data);
+			SaveUcenikList("templates.csv", templates);
+		}
+		private List<Ucenik> templates;
+		private readonly List<Ucenik> data;
+		private int curId = 0;
+		private List<Ucenik> LoadUcenikList(string path)
+		{
+			string data;
+			List<Ucenik> l = new List<Ucenik>();
+
+			try { data = File.ReadAllText(path); }
+			catch (Exception) { return l; }
+			string[] lines = data.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+			for (int i = 1; i < lines.Length; i++)
+				l.Add(LoadCsvObject(lines[i]));
+
+			return l;
+		}
+		private void SaveUcenikList(string path, List<Ucenik> u)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
+			foreach(Ucenik uc in u)
+				sb.AppendLine(GenerateCsvLine(uc));
+			File.WriteAllText(path, sb.ToString()); // TODO: Catch exception
 		}
 		private void drawButtonSign(Button button, PaintEventArgs e, string text)
 		{
@@ -172,68 +207,187 @@ namespace ProjekatMatura
 		{
 			"Сценски маскер и власуљар"
 		};
-
+		private static List<string> GetDataSource(int tipMature)
+		{
+			switch (tipMature)
+			{
+				case 0:
+					return opsta;
+				case 1:
+					return umetnicka;
+				case 2:
+					return poljoprivreda;
+				case 3:
+					return sumarstvo;
+				case 4:
+					return geologija;
+				case 5:
+					return masinstvo;
+				case 6:
+					return elektrotehnika;
+				case 7:
+					return hemija;
+				case 8:
+					return tekstilstvo;
+				case 9:
+					return geodezija;
+				case 10:
+					return saobracaj;
+				case 11:
+					return trgovina;
+				case 12:
+					return ekonomija;
+				case 13:
+					return zdravstvo;
+				case 14:
+					return licne;
+			}
+			return null;
+		}
 		private void tipMature_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			switch (tipMature.SelectedIndex) {
-				case 0:
-					treciPredmet.DataSource = opsta;
-					break;
-				case 1:
-					treciPredmet.DataSource = umetnicka;
-					break;
-				case 2:
-					treciPredmet.DataSource = poljoprivreda;
-					break;
-				case 3:
-					treciPredmet.DataSource = sumarstvo;
-					break;
-				case 4:
-					treciPredmet.DataSource = geologija;
-					break;
-				case 5:
-					treciPredmet.DataSource = masinstvo;
-					break;
-				case 6:
-					treciPredmet.DataSource = elektrotehnika;
-					break;
-				case 7:
-					treciPredmet.DataSource = hemija;
-					break;
-				case 8:
-					treciPredmet.DataSource = tekstilstvo;
-					break;
-				case 9:
-					treciPredmet.DataSource = geodezija;
-					break;
-				case 10:
-					treciPredmet.DataSource = saobracaj;
-					break;
-				case 11:
-					treciPredmet.DataSource = trgovina;
-					break;
-				case 12:
-					treciPredmet.DataSource = ekonomija;
-					break;
-				case 13:
-					treciPredmet.DataSource = zdravstvo;
-					break;
-				case 14:
-					treciPredmet.DataSource = licne;
-					break;
-			}
+			treciPredmet.DataSource = GetDataSource(tipMature.SelectedIndex);
 			prviPredmet.SelectedIndex = -1;
 			treciPredmet.SelectedIndex = -1;
 		}
-
 		private void prviPredmet_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			NoSameSubjects();
 		}
-
 		private void treciPredmet_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			NoSameSubjects();
+		}
+		private bool CommitStudent()
+		{
+			Ucenik u = new Ucenik {
+				jezikMature = jezikMature.SelectedIndex,
+				tipMature = tipMature.SelectedIndex,
+				prviPredmet = prviPredmet.SelectedIndex,
+				treciPredmet = treciPredmet.SelectedIndex,
+				ime = ime.Text,
+				prezime = prezime.Text,
+				razred = razred.Text,
+				skola = skola.SelectedText
+			};
+			if (u.IsEmpty())
+				return false;
+			if (curId >= data.Count || curId < 0)
+				data.Add(u);
+			else
+				data[curId] = u;
+			return true;
+		}
+		private void LoadStudent(Ucenik u)
+		{
+			skola.SelectedText = u.skola;
+			jezikMature.SelectedIndex = u.jezikMature;
+			tipMature.SelectedIndex = u.tipMature;
+			prviPredmet.SelectedIndex = u.prviPredmet;
+			treciPredmet.SelectedIndex = u.treciPredmet;
+			ime.Text = u.ime;
+			prezime.Text = u.prezime;
+			razred.Text = u.razred;
+		}
+		private void FetchStudent(int i)
+		{
+			Ucenik u;
+			try { u = data[i]; }
+			catch(Exception)
+			{
+				skola.SelectedIndex = -1;
+				LoadStudent(new Ucenik());
+				return;
+			}
+			LoadStudent(u);
+		}
+		private void UpdateStatus()
+		{
+			if (curId < 0)
+				status.Text = "ИД тренутног ученика: 0";
+			else
+				status.Text = $"ИД тренутног ученика: {curId}";
+		}
+		private void first_Click(object sender, EventArgs e)
+		{
+			if (curId <= 0)
+				return;
+			CommitStudent();
+			FetchStudent(0);
+			UpdateStatus();
+		}
+
+		private void back_Click(object sender, EventArgs e)
+		{
+			if (curId <= 0)
+				return;
+			CommitStudent();
+			FetchStudent(--curId);
+			UpdateStatus();
+		}
+
+		private void next_Click(object sender, EventArgs e)
+		{
+			CommitStudent();
+			if (curId >= data.Count)
+				return;
+			FetchStudent(++curId);
+			UpdateStatus();
+		}
+
+		private void last_Click(object sender, EventArgs e)
+		{
+			CommitStudent();
+			if (curId >= data.Count)
+				return;
+			FetchStudent(++curId);
+			UpdateStatus();
+		}
+
+		private Ucenik LoadCsvObject(string csvLine)
+		{
+			// sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
+			string[] fields = csvLine.Split(',');
+			Ucenik u = new Ucenik();
+			if (fields.Length != 8)
+				return u;
+
+			u.ime = fields[0];
+			u.prezime = fields[1];
+			u.razred = fields[2];
+			u.skola = fields[3];
+			u.jezikMature = jezikMature.Items.IndexOf(fields[4]);
+			u.tipMature = tipMature.Items.IndexOf(fields[5]);
+			u.prviPredmet = prviPredmet.Items.IndexOf(fields[6]);
+			u.treciPredmet = GetDataSource(u.tipMature).IndexOf(fields[7]);
+
+			return u;
+		}
+		public string GenerateCsvLine(Ucenik u) =>
+			// sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
+			$"{u.ime},{u.prezime},{u.razred},{u.skola},{jezikMature.Items[u.jezikMature]}," +
+			$"{tipMature.Items[u.tipMature]},{prviPredmet.Items[u.prviPredmet]}," +
+			$"{GetDataSource(u.tipMature)[u.treciPredmet]}";
+
+		private void SaveTemplate_Click(object sender, EventArgs e)
+		{
+			Ucenik u = new Ucenik {
+				jezikMature = jezikMature.SelectedIndex,
+				tipMature = tipMature.SelectedIndex,
+				prviPredmet = prviPredmet.SelectedIndex,
+				treciPredmet = treciPredmet.SelectedIndex,
+				skola = skola.SelectedText
+			};
+			if (u.skola == "")
+				return;	// TODO: Dialog box for error
+			for (int i = 0; i < templates.Count; i++)
+				if (templates[i].skola == u.skola) {
+					templates[i] = u;
+					skola.DataSource = templates;
+					return;
+				}
+			templates.Add(u);
+			skola.DataSource = templates;
 		}
 	}
 }

@@ -41,6 +41,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.ime = new System.Windows.Forms.TextBox();
+			this.status = new System.Windows.Forms.Label();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.treciPredmet = new System.Windows.Forms.ComboBox();
 			this.drugiPredmet = new System.Windows.Forms.ComboBox();
@@ -92,6 +93,7 @@
 			this.tableLayoutPanel2.Controls.Add(this.label8, 1, 0);
 			this.tableLayoutPanel2.Controls.Add(this.label9, 2, 0);
 			this.tableLayoutPanel2.Controls.Add(this.ime, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this.status, 3, 1);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 229);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -127,6 +129,7 @@
 			this.SaveTemplate.TabIndex = 8;
 			this.SaveTemplate.Text = "Сачувај шаблон школе";
 			this.SaveTemplate.UseVisualStyleBackColor = true;
+			this.SaveTemplate.Click += new System.EventHandler(this.SaveTemplate_Click);
 			// 
 			// last
 			// 
@@ -137,6 +140,7 @@
 			this.last.Size = new System.Drawing.Size(131, 78);
 			this.last.TabIndex = 3;
 			this.last.UseVisualStyleBackColor = true;
+			this.last.Click += new System.EventHandler(this.last_Click);
 			this.last.Paint += new System.Windows.Forms.PaintEventHandler(this.last_Paint);
 			// 
 			// first
@@ -148,6 +152,7 @@
 			this.first.Size = new System.Drawing.Size(128, 78);
 			this.first.TabIndex = 0;
 			this.first.UseVisualStyleBackColor = true;
+			this.first.Click += new System.EventHandler(this.first_Click);
 			this.first.Paint += new System.Windows.Forms.PaintEventHandler(this.first_Paint);
 			// 
 			// next
@@ -159,6 +164,7 @@
 			this.next.Size = new System.Drawing.Size(128, 78);
 			this.next.TabIndex = 2;
 			this.next.UseVisualStyleBackColor = true;
+			this.next.Click += new System.EventHandler(this.next_Click);
 			this.next.Paint += new System.Windows.Forms.PaintEventHandler(this.next_Paint);
 			// 
 			// back
@@ -170,6 +176,7 @@
 			this.back.Size = new System.Drawing.Size(128, 78);
 			this.back.TabIndex = 1;
 			this.back.UseVisualStyleBackColor = true;
+			this.back.Click += new System.EventHandler(this.back_Click);
 			this.back.Paint += new System.Windows.Forms.PaintEventHandler(this.back_Paint);
 			// 
 			// label7
@@ -209,6 +216,15 @@
 			this.ime.Name = "ime";
 			this.ime.Size = new System.Drawing.Size(128, 20);
 			this.ime.TabIndex = 12;
+			// 
+			// status
+			// 
+			this.status.AutoSize = true;
+			this.status.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.status.Location = new System.Drawing.Point(405, 28);
+			this.status.Name = "status";
+			this.status.Size = new System.Drawing.Size(131, 28);
+			this.status.TabIndex = 15;
 			// 
 			// tableLayoutPanel3
 			// 
@@ -445,6 +461,7 @@
 		private System.Windows.Forms.TextBox ime;
 		private System.Windows.Forms.ComboBox treciPredmet;
 		private System.Windows.Forms.ComboBox drugiPredmet;
+		private System.Windows.Forms.Label status;
 	}
 }
 

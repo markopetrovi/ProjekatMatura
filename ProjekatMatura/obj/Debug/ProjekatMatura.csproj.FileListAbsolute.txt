@@ -28,3 +28,13 @@ C:\Users\Marko Petrovic\Desktop\Domaci rad\Objektno-orijentisano programiranje\P
 C:\Users\Marko Petrovic\Desktop\Domaci rad\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.csproj.CoreCompileInputs.cache
 C:\Users\Marko Petrovic\Desktop\Domaci rad\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.exe
 C:\Users\Marko Petrovic\Desktop\Domaci rad\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.pdb
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\bin\Debug\ProjekatMatura.exe.config
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\bin\Debug\ProjekatMatura.exe
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\bin\Debug\ProjekatMatura.pdb
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.csproj.AssemblyReference.cache
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.Form1.resources
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.Properties.Resources.resources
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.csproj.GenerateResource.cache
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.csproj.CoreCompileInputs.cache
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.exe
+C:\Users\Marko Petrovic\Desktop\3. godina\Objektno-orijentisano programiranje\ProjekatMatura\ProjekatMatura\obj\Debug\ProjekatMatura.pdb
