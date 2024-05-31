@@ -23,11 +23,14 @@ namespace ProjekatMatura
 			UpdateStatus();
 			data = LoadUcenikList("data.csv");
 			templates = LoadUcenikList("templates.csv");
+			FetchStudent(0);
+			UpdateSchoolList();
 		}
-		~Form1()
+		private void UpdateSchoolList()
 		{
-			SaveUcenikList("data.csv", data);
-			SaveUcenikList("templates.csv", templates);
+			skola.Items.Clear();
+			foreach (Ucenik u in templates)
+				skola.Items.Add(u.skola);
 		}
 		private List<Ucenik> templates;
 		private readonly List<Ucenik> data;
@@ -48,7 +51,7 @@ namespace ProjekatMatura
 		private void SaveUcenikList(string path, List<Ucenik> u)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
+			sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,drugiPredmet,treciPredmet");
 			foreach(Ucenik uc in u)
 				sb.AppendLine(GenerateCsvLine(uc));
 			File.WriteAllText(path, sb.ToString()); // TODO: Catch exception
@@ -268,7 +271,7 @@ namespace ProjekatMatura
 				ime = ime.Text,
 				prezime = prezime.Text,
 				razred = razred.Text,
-				skola = skola.SelectedText
+				skola = skola.Text
 			};
 			if (u.IsEmpty())
 				return false;
@@ -280,7 +283,7 @@ namespace ProjekatMatura
 		}
 		private void LoadStudent(Ucenik u)
 		{
-			skola.SelectedText = u.skola;
+			skola.Text = u.skola;
 			jezikMature.SelectedIndex = u.jezikMature;
 			tipMature.SelectedIndex = u.tipMature;
 			prviPredmet.SelectedIndex = u.prviPredmet;
@@ -303,10 +306,7 @@ namespace ProjekatMatura
 		}
 		private void UpdateStatus()
 		{
-			if (curId < 0)
-				status.Text = "ИД тренутног ученика: 0";
-			else
-				status.Text = $"ИД тренутног ученика: {curId}";
+			status.Text = $"ИД тренутног ученика: {curId}";
 		}
 		private void first_Click(object sender, EventArgs e)
 		{
@@ -346,10 +346,10 @@ namespace ProjekatMatura
 
 		private Ucenik LoadCsvObject(string csvLine)
 		{
-			// sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
+			// sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,drugiPredmet,treciPredmet");
 			string[] fields = csvLine.Split(',');
 			Ucenik u = new Ucenik();
-			if (fields.Length != 8)
+			if (fields.Length != 9)
 				return u;
 
 			u.ime = fields[0];
@@ -359,16 +359,33 @@ namespace ProjekatMatura
 			u.jezikMature = jezikMature.Items.IndexOf(fields[4]);
 			u.tipMature = tipMature.Items.IndexOf(fields[5]);
 			u.prviPredmet = prviPredmet.Items.IndexOf(fields[6]);
-			u.treciPredmet = GetDataSource(u.tipMature).IndexOf(fields[7]);
+			try { u.treciPredmet = GetDataSource(u.tipMature).IndexOf(fields[8]); }
+			catch(Exception) { u.treciPredmet = -1; }
 
 			return u;
 		}
-		public string GenerateCsvLine(Ucenik u) =>
-			// sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,treciPredmet");
-			$"{u.ime},{u.prezime},{u.razred},{u.skola},{jezikMature.Items[u.jezikMature]}," +
-			$"{tipMature.Items[u.tipMature]},{prviPredmet.Items[u.prviPredmet]}," +
-			$"{GetDataSource(u.tipMature)[u.treciPredmet]}";
+		public string GenerateCsvLine(Ucenik u)
+		{
+			StringBuilder sb = new StringBuilder();
+			//sb.AppendLine("Ime,Prezime,Razred,Skola,jezikMature,tipMature,prviPredmet,drugiPredmet,treciPredmet");
+			sb.Append($"{u.ime},{u.prezime},{u.razred},{u.skola},");
 
+			try { sb.Append($"{jezikMature.Items[u.jezikMature]},"); }
+			catch(Exception) { sb.Append("Nepoznato,"); }
+
+			try { sb.Append($"{tipMature.Items[u.tipMature]},"); }
+			catch (Exception) { sb.Append("Nepoznato,"); }
+
+			try { sb.Append($"{prviPredmet.Items[u.prviPredmet]},"); } 
+			catch (Exception) { sb.Append("Nepoznato,"); }
+
+			sb.Append("Matematika,");
+
+			try { sb.Append($"{GetDataSource(u.tipMature)[u.treciPredmet]}"); }
+			catch (Exception) { sb.Append("Nepoznato"); }
+
+			return sb.ToString();
+		}
 		private void SaveTemplate_Click(object sender, EventArgs e)
 		{
 			Ucenik u = new Ucenik {
@@ -376,18 +393,25 @@ namespace ProjekatMatura
 				tipMature = tipMature.SelectedIndex,
 				prviPredmet = prviPredmet.SelectedIndex,
 				treciPredmet = treciPredmet.SelectedIndex,
-				skola = skola.SelectedText
+				skola = skola.Text
 			};
 			if (u.skola == "")
 				return;	// TODO: Dialog box for error
 			for (int i = 0; i < templates.Count; i++)
 				if (templates[i].skola == u.skola) {
 					templates[i] = u;
-					skola.DataSource = templates;
+					UpdateSchoolList();
 					return;
 				}
 			templates.Add(u);
-			skola.DataSource = templates;
+			UpdateSchoolList();
+		}
+
+		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			CommitStudent();
+			SaveUcenikList("data.csv", data);
+			SaveUcenikList("templates.csv", templates);
 		}
 	}
 }
