@@ -335,6 +335,7 @@
 			this.skola.Name = "skola";
 			this.skola.Size = new System.Drawing.Size(344, 21);
 			this.skola.TabIndex = 0;
+			this.skola.SelectedIndexChanged += new System.EventHandler(this.skola_SelectedIndexChanged);
 			// 
 			// jezikMature
 			// 

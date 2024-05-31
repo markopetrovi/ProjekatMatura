@@ -91,8 +91,10 @@ namespace ProjekatMatura
 			if (treciPredmet.SelectedIndex != opsta.Count - 1 && opsta.Count == 12 &&
 				prviPredmet.Items.Count != 9)
 				prviPredmet.Items.Insert(0, "Српски језик и књижевност");
-			if (oldCount != opsta.Count)
-				treciPredmet.DataSource = opsta;
+			if (oldCount != opsta.Count) {
+				treciPredmet.Items.Clear();
+				treciPredmet.Items.AddRange(opsta.ToArray());
+			}
 		}
 		private static List<string> opsta = new List<string>
 		{
@@ -249,7 +251,10 @@ namespace ProjekatMatura
 		}
 		private void tipMature_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			treciPredmet.DataSource = GetDataSource(tipMature.SelectedIndex);
+			try {
+				treciPredmet.Items.Clear();
+				treciPredmet.Items.AddRange(GetDataSource(tipMature.SelectedIndex).ToArray());
+			} catch(Exception) { }
 			prviPredmet.SelectedIndex = -1;
 			treciPredmet.SelectedIndex = -1;
 		}
@@ -313,7 +318,7 @@ namespace ProjekatMatura
 			if (curId <= 0)
 				return;
 			CommitStudent();
-			FetchStudent(0);
+			FetchStudent(curId=0);
 			UpdateStatus();
 		}
 
@@ -340,7 +345,7 @@ namespace ProjekatMatura
 			CommitStudent();
 			if (curId >= data.Count)
 				return;
-			FetchStudent(++curId);
+			FetchStudent(curId=data.Count-1);
 			UpdateStatus();
 		}
 
@@ -412,6 +417,18 @@ namespace ProjekatMatura
 			CommitStudent();
 			SaveUcenikList("data.csv", data);
 			SaveUcenikList("templates.csv", templates);
+		}
+
+		private void skola_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Ucenik u;
+			try { u = templates[skola.SelectedIndex]; }	// Can be -1
+			catch(Exception) { return; }
+			
+			jezikMature.SelectedIndex = u.jezikMature;
+			tipMature.SelectedIndex = u.tipMature;
+			prviPredmet.SelectedIndex = u.prviPredmet;
+			treciPredmet.SelectedIndex = u.treciPredmet;
 		}
 	}
 }
